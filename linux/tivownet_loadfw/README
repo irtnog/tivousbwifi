@@ -1,0 +1,63 @@
+tivownet_loadfw
+http://sourceforge.net/projects/tivousbwifi/
+
+Load firmware to TiVo USB Wireless Adapter.
+
+Generically, should be able to load firmware to the Broadcom chip
+    BCM4320
+    AirForce One. Single-Chip 802.11g USB 2.0 Transceiver
+http://www.broadcom.com/products/Wireless-LAN/802.11-Wireless-LAN-Solutions/BCM4320
+
+Overview
+========
+This release is to provide an user mode utility to load firmware onto the
+TiVo Wireless USB Adapter.  It may be of value to others as the adapter is
+based on the Broadcom BCM4320 chipset.  It demonstrates the protocol between
+the chip and host for firmware download.
+
+The tivownetusb device driver contains the necessary support for firmware
+download and therefore this utility is not necessary.
+
+This utility is being release for development research and demonstration
+purposes.
+
+Operation
+=========
+1. Plug in the TiVo Wireless USB adapter into the host.
+2. cat /proc/bus/usb/devices and you should see the device as it was
+   enumerated.
+
+   T:  Bus=04 Lev=01 Prnt=01 Port=05 Cnt=01 Dev#= 48 Spd=480 MxCh= 0
+   D:  Ver= 2.00 Cls=ff(vend.) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
+   P:  Vendor=0a5c ProdID=bd11 Rev= 0.01
+   S:  Manufacturer=Broadcom
+   S:  Product=Remote Download Wireless Adapter
+   S:  SerialNumber=000000000001
+   C:* #Ifs= 1 Cfg#= 1 Atr=80 MxPwr=200mA
+   I:  If#= 0 Alt= 0 #EPs= 1 Cls=ff(vend.) Sub=02 Prot=ff Driver=(none)
+   E:  Ad=01(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+
+3. Execute tivownet_loadfw to load the firmware.
+   (you can execute tivownet_loadfw --help for command line options)
+4. cat /proc/bus/usb/devices and you should see the new device as it was
+   enumerated.
+
+   T:  Bus=04 Lev=01 Prnt=01 Port=05 Cnt=01 Dev#= 47 Spd=480 MxCh= 0
+   D:  Ver= 2.00 Cls=02(comm.) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
+   P:  Vendor=150a ProdID=1010 Rev= 0.06
+   S:  Manufacturer=Broadcom
+   S:  Product=USBCDC 802.11 Wireless Adapter
+   S:  SerialNumber=############
+   C:* #Ifs= 2 Cfg#= 1 Atr=80 MxPwr=100mA
+   I:  If#= 0 Alt= 0 #EPs= 1 Cls=02(comm.) Sub=02 Prot=ff Driver=(none)
+   E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=1ms
+   I:  If#= 1 Alt= 0 #EPs= 2 Cls=0a(data ) Sub=00 Prot=00 Driver=(none)
+   E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+   E:  Ad=03(O) Atr=02(Bulk) MxPS= 512 Ivl=125us
+
+5. optionally, you can execute tivownet_loadfw again, it should not find the
+   device, as it only looks for VID 0x0a5c and PID 0xbd11.  The loader does
+   not attempt to go back through the devices on the bus to determine if the
+   firmware load and subsequent reboot of the device was successful (this
+   feature may be added at a later date).
+
